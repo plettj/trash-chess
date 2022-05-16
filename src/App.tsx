@@ -18,8 +18,6 @@ const mainTheme = createTheme({
   }
 });
 
-console.log(mainTheme);
-
 const App = (): JSX.Element => {
   return (
     <ThemeProvider theme={mainTheme}>
