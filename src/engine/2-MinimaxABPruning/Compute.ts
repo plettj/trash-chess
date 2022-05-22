@@ -9,21 +9,15 @@ const PIECE_VALUES = {
   "k": 0,
 }
 
-const COMP_DEPTH = 3;
+const COMP_DEPTH = 4;
 
 
 // Pre: board.game_over() !== true
 export default function ComputeMove(board: ChessJS.ChessInstance): string {
-  console.log("absolute score is: " + pieceValueDiff(board));
 
-  // Min Max time with Alpha Beta pruning!!!
+  // Min Max with Alpha Beta pruning!!!
 
-  // Alpha: best choice so far for the player "MAX"
-  // Beta: best choice so far for the player "MIN"
-
-  // depth of three...
-
-  let move:[string, number] = minMax(board, 0, 112, -112);
+  let move:[string, number] = minMax(board);
 
   console.log(move[0] + " is best! Its value is: " + move[1]);
 
@@ -32,10 +26,7 @@ export default function ComputeMove(board: ChessJS.ChessInstance): string {
   return board.fen();
 }
 
-
-
-// Returns [bestMove, newAlphaOrBetaValue]
-function minMax(board: ChessJS.ChessInstance, depth: number, alpha: number, beta: number): [string, number] {
+function minMax(board: ChessJS.ChessInstance, depth:number = 0, alpha:number = -112, beta:number = 112): [string, number] {
   if (depth >= COMP_DEPTH) {
     return ["", pieceValueDiff(board)];
   }
@@ -46,51 +37,40 @@ function minMax(board: ChessJS.ChessInstance, depth: number, alpha: number, beta
     return ["", pieceValueDiff(board)];
   }
 
-  let bestProspect = 0;
+  let bestProspect = Math.floor(Math.random() * moves.length);
   depth++;
-  console.log("Depth:" + depth + " - alpha:" + alpha + " - beta:" + beta + " - turn:" + board.turn());
 
   if (board.turn() === "w") {
-    let best = -112;
-
     for (let i = 0; i < moves.length; i++) {
       board.move(moves[i]);
       let result = minMax(board, depth, alpha, beta);
       board.undo();
       
-      if (best < result[1]) {
-        console.log(depth + " | update best-alpha to: " + result[1]);
+      if (result[1] > alpha) {
+        alpha = result[1];
         bestProspect = i;
       }
-      best = best > result[1] ? best : result[1];
-      alpha = alpha > beta ? alpha : beta;
-
-      if (beta <= alpha) break;
+      if (alpha >= beta) break;
     }
 
     return [moves[bestProspect], alpha];
   } else {
-    let best = 112;
-
     for (let i = 0; i < moves.length; i++) {
       board.move(moves[i]);
       let result = minMax(board, depth, alpha, beta);
       board.undo();
       
-      if (best > result[1]) {
-        console.log(depth + " | update best-beta to: " + result[1]);
+      if (result[1] < beta) {
+        beta = result[1];
         bestProspect = i;
       }
-      best = best < result[1] ? best : result[1];
-      beta = beta < best ? beta : best;
-
       if (alpha >= beta) break;
     }
+
     return [moves[bestProspect], beta];
   }
 
 }
-
 
 function pieceValueDiff(chessBoard: ChessJS.ChessInstance): number {
   let score:number = 0;
@@ -98,10 +78,8 @@ function pieceValueDiff(chessBoard: ChessJS.ChessInstance): number {
   if (chessBoard.game_over()) {
     if (chessBoard.in_checkmate()) {
       if (chessBoard.turn() === "b") {
-        console.log("||| white wins at the end of this");
         return 112;
       } else {
-        console.log("||| black wins at the end of this");
         return -112;
       }
     } else {

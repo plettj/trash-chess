@@ -35,7 +35,9 @@ export default function NotationMenu({ notation }: Props) {
     <Grid
       container
       width="250px"
+      height="520px"
       display="flex"
+      overflow="auto"
       bgcolor={theme.palette.primary.main}
       borderRadius={5}
       p={3}
