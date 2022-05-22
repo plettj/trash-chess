@@ -16,7 +16,7 @@ export default function NotationMenu({ notation }: Props) {
       <Grid
         item
         xs={5}
-        color={i === selected ? theme.palette.secondary.light : theme.palette.primary.contrastText}
+        color={i === selected ? "yellow" : theme.palette.primary.contrastText}
         key={i}
       >
         <Box onMouseDown={(event) => setSelected(i)}>
@@ -34,9 +34,11 @@ export default function NotationMenu({ notation }: Props) {
   return (
     <Grid
       container
-      width="200px"
+      width="250px"
       display="flex"
-      bgcolor={theme.palette.primary.dark}
+      bgcolor={theme.palette.primary.main}
+      borderRadius={5}
+      p={3}
     >
       <Grid item xs={12}>
         <Typography>
