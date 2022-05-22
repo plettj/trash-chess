@@ -32,22 +32,24 @@ export default function NotationMenu({ notation }: Props) {
   }
 
   return (
-    <Grid
-      container
-      width="250px"
-      height="520px"
-      display="flex"
-      overflow="auto"
-      bgcolor={theme.palette.primary.main}
-      borderRadius={5}
-      p={3}
-    >
-      <Grid item xs={12}>
-        <Typography>
-          <strong>Game Notation:</strong>
-        </Typography>
-      </Grid>
-    {gridItems}
-    </Grid>
+    <Box height="520px">
+      <Typography height="40px" variant="h5">
+        <strong>Game Notation:</strong>
+      </Typography>
+      <Box height="auto">
+        <Grid
+          container
+          width="250px"
+          height="480px"
+          display="flex"
+          overflow="auto"
+          bgcolor={theme.palette.primary.main}
+          borderRadius={5}
+          p={3}
+        >
+        {gridItems}
+        </Grid>
+      </Box>
+    </Box>
   );
 }
