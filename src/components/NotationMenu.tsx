@@ -1,5 +1,6 @@
 import { Grid, Box, Typography } from '@mui/material';
 import React, { useState } from 'react';
+import getTheme from '../assets/theme';
 
 interface Props {
   notation: string[];
@@ -7,6 +8,7 @@ interface Props {
 
 export default function NotationMenu({ notation }: Props) {
   let [selected, setSelected] = useState(notation.length - 1);
+  let theme = getTheme();
 
   let gridItems = [];
   for (let i = 0; i < notation.length; i++) {
@@ -14,7 +16,7 @@ export default function NotationMenu({ notation }: Props) {
       <Grid
         item
         xs={5}
-        color={i === selected ? "yellow" : "red"}
+        color={i === selected ? theme.palette.secondary.light : theme.palette.primary.contrastText}
         key={i}
       >
         <Box onMouseDown={(event) => setSelected(i)}>
@@ -32,10 +34,9 @@ export default function NotationMenu({ notation }: Props) {
   return (
     <Grid
       container
-      color="red"
       width="200px"
       display="flex"
-      bgcolor="green"
+      bgcolor={theme.palette.primary.dark}
     >
       <Grid item xs={12}>
         <Typography>

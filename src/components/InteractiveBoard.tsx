@@ -10,7 +10,7 @@ export default function InteractiveBoard({ position, handleMove }: Props) {
   return (
     <Chessboard
       position={position}
-      width={400}
+      width={520}
       dropSquareStyle={{boxShadow: 'inset 0 0 1px 4px rgba(0, 0, 0, 0.2)'}}
       onDrop={(move) =>
         handleMove({
