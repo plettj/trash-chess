@@ -7,8 +7,8 @@ interface Props {
 }
 
 export default function NotationMenu({ notation }: Props) {
-  let [selected, setSelected] = useState(notation.length - 1);
-  let theme = getTheme();
+  const [selected, setSelected] = useState(notation.length - 1);
+  const theme = getTheme();
 
   let gridItems = [];
   for (let i = 0; i < notation.length; i++) {

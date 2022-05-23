@@ -14,6 +14,7 @@ const WEIGHTS:Weights = {
   "k": 60000,
 }
 
+
 const COMP_DEPTH = 3;
 
 const HEURISTIC_W:Heuristic = {
@@ -110,7 +111,7 @@ export default function ComputeMove(board: ChessJS.ChessInstance): string {
 
   // Min Max with Alpha Beta pruning with Position Heuristics!
 
-  let lastMove = board.history({ verbose: true })[board.history().length - 1];
+  let lastMove:Move = board.history({ verbose: true })[board.history().length - 1];
   let currentEval = boardValue(board, 0, lastMove, true);
   let move:[Move, number] = minMax(board, lastMove, currentEval);
 
@@ -122,7 +123,13 @@ export default function ComputeMove(board: ChessJS.ChessInstance): string {
 }
 
 function minMax(board: ChessJS.ChessInstance, lastMove:Move, lastEval:number, depth:number = 0, alpha:number = -60000, beta:number = 60000): [Move, number] {
-  let currentEval = boardValue(board, lastEval, lastMove);
+  let currentEval = boardValue(board, lastEval, lastMove, lastMove === undefined);
+
+  if (Math.abs(currentEval) === 60000) { // This position is finished already!
+    if (currentEval > 0) return [lastMove, currentEval - depth];
+    else return [lastMove, currentEval + depth];
+  }
+
   if (depth >= COMP_DEPTH) {
     return [lastMove, currentEval];
   }
@@ -160,7 +167,9 @@ function minMax(board: ChessJS.ChessInstance, lastMove:Move, lastEval:number, de
         beta = result[1];
         bestProspect = i;
       }
-      if (alpha >= beta) break;
+      if (alpha >= beta) {
+        break;
+      }
     }
 
     return [moves[bestProspect], beta];

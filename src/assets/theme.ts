@@ -14,6 +14,9 @@ export default function getTheme() {
         secondary: {
           main: '#E33E7F',
           light: '#ed85ae'
+        },
+        background: {
+          default: "#f7fafa"
         }
       }
     })
