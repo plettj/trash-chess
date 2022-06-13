@@ -4,7 +4,7 @@ import NotationMenu from "../components/NotationMenu";
 import InteractiveBoard from "../components/InteractiveBoard";
 import { Box, InputLabel, FormControl, MenuItem, Select, SelectChangeEvent, Typography, Button } from '@mui/material';
 import * as ChessJS from "chess.js";
-import DoMove from "../engine/BoardHandler";
+import { doMove, doComputerMove } from "../engine/BoardHandler";
 import getTheme from "../assets/theme";
 
 const Chess = typeof ChessJS === "function" ? ChessJS : ChessJS.Chess;
@@ -16,6 +16,7 @@ export default function PlayPage() {
   const [fen, setFen] = useState(board.fen());
   const [blackEngine, setBlackEngine] = useState(3);
   const [whiteEngine, setWhiteEngine] = useState(0); // 0 - player
+  const [calculatingMove, setCalculatingMove] = useState(false);
   const theme = getTheme();
 
   const handleWhite = (event: SelectChangeEvent) => {
@@ -23,6 +24,17 @@ export default function PlayPage() {
   }
   const handleBlack = (event: SelectChangeEvent) => {
     setBlackEngine(Number(event.target.value));
+  }
+
+  async function handleComputerMove() {
+    setCalculatingMove(true);
+    console.log("calculating...");
+
+    const fen = await doComputerMove(board, blackEngine, whiteEngine);
+
+    setCalculatingMove(false);
+    console.log("calculating... DONE!");
+    setFen(fen);
   }
 
   return (
@@ -43,24 +55,7 @@ export default function PlayPage() {
           borderRadius={5}
           bgcolor={theme.palette.primary.main}
         >
-          <Box width="215px" mx="auto" py={4}>
-            <FormControl fullWidth>
-              <InputLabel id="white-player-label">White Player</InputLabel>
-              <Select
-                labelId="white-player-label"
-                id="white-player-select"
-                label="White Player"
-                value={whiteEngine.toString()}
-                onChange={handleWhite}
-              >
-                <MenuItem value={0}>Player</MenuItem>
-                <MenuItem value={1}>Random Bot</MenuItem>
-                <MenuItem value={2}>Minimax Bot (depth: 4)</MenuItem>
-                <MenuItem value={3}>Heuristic Bot (depth: 3)</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box width="215px" mx="auto" py={4}>
+          <Box width="215px" mx="auto" py={6}>
             <FormControl fullWidth>
               <InputLabel id="black-player-label">Black Player</InputLabel>
               <Select
@@ -77,13 +72,28 @@ export default function PlayPage() {
               </Select>
             </FormControl>
           </Box>
-          <Box display="flex" justifyContent="center">
+          <Box width="215px" mx="auto" py={2}>
+            <FormControl fullWidth>
+              <InputLabel id="white-player-label">White Player</InputLabel>
+              <Select
+                labelId="white-player-label"
+                id="white-player-select"
+                label="White Player"
+                value={whiteEngine.toString()}
+                onChange={handleWhite}
+              >
+                <MenuItem value={0}>Player</MenuItem>
+                <MenuItem value={1}>Random Bot</MenuItem>
+                <MenuItem value={2}>Minimax Bot (depth: 4)</MenuItem>
+                <MenuItem value={3}>Heuristic Bot (depth: 3)</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+          <Box display="flex" justifyContent="center" mt={4}>
             <Button
               variant="contained"
-              size="large"
-              onClick={() => {
-                setFen(DoMove(board, {from: "a2", to: "b6", promotion: "q"}, blackEngine, whiteEngine));
-              }}
+              onClick={async () => { await handleComputerMove(); }}
+              disabled={calculatingMove}
               sx={{
                 backgroundColor: theme.palette.primary.dark,
                 color: theme.palette.primary.contrastText,
@@ -91,16 +101,35 @@ export default function PlayPage() {
                   backgroundColor: theme.palette.primary.main
                 }
               }}
-            ><strong>Play Move</strong></Button>
+            ><strong>Play computer move</strong></Button>
           </Box>
         </Box>
       </Box>
 
       <Box mx={2}/>
 
+      {calculatingMove &&
+        <Box
+          position="absolute"
+          zIndex="50"
+          width="520px"
+          height="520px"
+          bgcolor="rgba(0, 0, 0, 0.5)"
+          m={0}
+          p={0}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Typography color="white" variant="h4">
+            Calculating move...
+          </Typography>
+        </Box>
+      }
+
       <InteractiveBoard
         position={fen}
-        handleMove={(move: ShortMove) => setFen(DoMove(board, move, blackEngine, whiteEngine))}
+        handleMove={(move: ShortMove) => setFen(doMove(board, move, blackEngine, whiteEngine))}
       />
 
       <Box mx={2}/>
